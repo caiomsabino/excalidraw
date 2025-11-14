@@ -119,4 +119,57 @@ describe("LaserPointerMenu", () => {
       expect(h.state.laserPointerMode).toBe("hold-to-draw");
     });
   });
+
+  it("should show clear button only when in annotation mode", async () => {
+    act(() => {
+      h.app.setActiveTool({ type: "laser" });
+      h.app.setAppState({ laserPointerMode: "annotation" });
+    });
+
+    const laserMenu = container.querySelector(
+      '[data-testid="laser-pointer-menu-trigger"]',
+    )!;
+    
+    fireEvent.click(laserMenu);
+    let clearButton = container.querySelector(
+      '[data-testid="laser-clear-annotations"]',
+    );
+    expect(clearButton).toBeInTheDocument();
+
+    act(() => {
+      h.app.setAppState({ laserPointerMode: "pointer" });
+    });
+
+    fireEvent.click(laserMenu);
+    clearButton = container.querySelector(
+      '[data-testid="laser-clear-annotations"]',
+    );
+    expect(clearButton).not.toBeInTheDocument();
+  });
+
+  it("should hide clear button when laser tool is deactivated", async () => {
+    act(() => {
+      h.app.setActiveTool({ type: "laser" });
+      h.app.setAppState({ laserPointerMode: "annotation" });
+    });
+
+    const laserMenu = container.querySelector(
+      '[data-testid="laser-pointer-menu-trigger"]',
+    )!;
+    fireEvent.click(laserMenu);
+
+    let clearButton = container.querySelector(
+      '[data-testid="laser-clear-annotations"]',
+    );
+    expect(clearButton).toBeInTheDocument();
+
+    act(() => {
+      h.app.setActiveTool({ type: "rectangle" });
+    });
+
+    clearButton = container.querySelector(
+      '[data-testid="laser-clear-annotations"]',
+    );
+    expect(clearButton).not.toBeInTheDocument();
+  });
 });

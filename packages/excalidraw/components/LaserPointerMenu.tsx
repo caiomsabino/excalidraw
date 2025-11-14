@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import DropdownMenu from "./dropdownMenu/DropdownMenu";
-import { laserPointerToolIcon } from "./icons";
+import { laserPointerToolIcon, TrashIcon } from "./icons";
 
 import type { AppClassProperties, UIAppState } from "../types";
 
@@ -21,6 +21,11 @@ export const LaserPointerMenu = ({
     mode: "pointer" | "annotation" | "hold-to-draw",
   ) => {
     app.setAppState({ laserPointerMode: mode });
+    setIsOpen(false);
+  };
+
+  const handleClearAnnotations = () => {
+    // Clear annotations logic will be implemented in future cycles
     setIsOpen(false);
   };
 
@@ -59,6 +64,15 @@ export const LaserPointerMenu = ({
         >
           Hold-to-Draw Mode
         </DropdownMenu.Item>
+        {app.state.laserPointerMode === "annotation" && (
+          <DropdownMenu.Item
+            data-testid="laser-clear-annotations"
+            onSelect={handleClearAnnotations}
+            icon={TrashIcon}
+          >
+            Clear Annotations
+          </DropdownMenu.Item>
+        )}
       </DropdownMenu.Content>
     </DropdownMenu>
   );
