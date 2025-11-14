@@ -51,6 +51,8 @@ import { useTextEditorFocus } from "../hooks/useTextEditorFocus";
 
 import { actionToggleViewMode } from "../actions/actionToggleViewMode";
 
+import { LaserPointerMenu } from "./LaserPointerMenu";
+
 import { getToolbarTools } from "./shapes";
 
 import "./Actions.scss";
@@ -1270,6 +1272,8 @@ export const ShapesSwitcher = ({
           )}
         </DropdownMenu.Content>
       </DropdownMenu>
+
+      <LaserPointerMenu activeTool={activeTool} app={app} />
     </>
   );
 };
