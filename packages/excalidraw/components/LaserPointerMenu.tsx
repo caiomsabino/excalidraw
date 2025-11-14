@@ -17,6 +17,13 @@ export const LaserPointerMenu = ({
   const [isOpen, setIsOpen] = useState(false);
   const isLaserActive = activeTool.type === "laser";
 
+  const handleModeSelect = (
+    mode: "pointer" | "annotation" | "hold-to-draw",
+  ) => {
+    app.setAppState({ laserPointerMode: mode });
+    setIsOpen(false);
+  };
+
   if (!isLaserActive) {
     return null;
   }
@@ -34,13 +41,22 @@ export const LaserPointerMenu = ({
         onSelect={() => setIsOpen(false)}
         data-testid="laser-pointer-dropdown"
       >
-        <DropdownMenu.Item data-testid="laser-mode-pointer">
+        <DropdownMenu.Item
+          data-testid="laser-mode-pointer"
+          onSelect={() => handleModeSelect("pointer")}
+        >
           Pointer Mode
         </DropdownMenu.Item>
-        <DropdownMenu.Item data-testid="laser-mode-annotation">
+        <DropdownMenu.Item
+          data-testid="laser-mode-annotation"
+          onSelect={() => handleModeSelect("annotation")}
+        >
           Annotation Mode
         </DropdownMenu.Item>
-        <DropdownMenu.Item data-testid="laser-mode-hold-to-draw">
+        <DropdownMenu.Item
+          data-testid="laser-mode-hold-to-draw"
+          onSelect={() => handleModeSelect("hold-to-draw")}
+        >
           Hold-to-Draw Mode
         </DropdownMenu.Item>
       </DropdownMenu.Content>

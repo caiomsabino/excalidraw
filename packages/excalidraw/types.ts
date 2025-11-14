@@ -450,6 +450,9 @@ export interface AppState {
   // as elements are unlocked, we remove the groupId from the elements
   // and also remove groupId from this map
   lockedMultiSelections: { [groupId: string]: true };
+
+  /** laser pointer mode selection */
+  laserPointerMode: "pointer" | "annotation" | "hold-to-draw";
 }
 
 export type SearchMatch = {
@@ -750,6 +753,7 @@ export type AppClassProperties = {
   onPointerUpEmitter: App["onPointerUpEmitter"];
   updateEditorAtom: App["updateEditorAtom"];
   onPointerDownEmitter: App["onPointerDownEmitter"];
+  setAppState: App["setAppState"];
 };
 
 export type PointerDownState = Readonly<{

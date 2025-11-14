@@ -74,4 +74,49 @@ describe("LaserPointerMenu", () => {
       expect(holdToDrawMode).toBeInTheDocument();
     });
   });
+
+  it("should change laser mode when option is selected", async () => {
+    act(() => {
+      h.app.setActiveTool({ type: "laser" });
+    });
+
+    // Default mode should be pointer
+    expect(h.state.laserPointerMode).toBe("pointer");
+
+    const laserMenu = container.querySelector(
+      '[data-testid="laser-pointer-menu-trigger"]',
+    );
+    fireEvent.click(laserMenu!);
+
+    await waitFor(() => {
+      const annotationMode = container.querySelector(
+        '[data-testid="laser-mode-annotation"]',
+      );
+      expect(annotationMode).toBeInTheDocument();
+      
+      fireEvent.click(annotationMode!);
+      expect(h.state.laserPointerMode).toBe("annotation");
+    });
+  });
+
+  it("should change to hold-to-draw mode when selected", async () => {
+    act(() => {
+      h.app.setActiveTool({ type: "laser" });
+    });
+
+    const laserMenu = container.querySelector(
+      '[data-testid="laser-pointer-menu-trigger"]',
+    );
+    fireEvent.click(laserMenu!);
+
+    await waitFor(() => {
+      const holdToDrawMode = container.querySelector(
+        '[data-testid="laser-mode-hold-to-draw"]',
+      );
+      expect(holdToDrawMode).toBeInTheDocument();
+      
+      fireEvent.click(holdToDrawMode!);
+      expect(h.state.laserPointerMode).toBe("hold-to-draw");
+    });
+  });
 });
