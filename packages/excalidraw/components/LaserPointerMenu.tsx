@@ -5,10 +5,30 @@ import { laserPointerToolIcon, TrashIcon } from "./icons";
 
 import type { AppClassProperties, UIAppState } from "../types";
 
+type LaserMode = "pointer" | "annotation" | "hold-to-draw";
+
 type LaserPointerMenuProps = {
   activeTool: UIAppState["activeTool"];
   app: AppClassProperties;
 };
+
+const MENU_ITEMS = [
+  {
+    mode: "pointer" as const,
+    label: "Pointer Mode",
+    testId: "laser-mode-pointer",
+  },
+  {
+    mode: "annotation" as const,
+    label: "Annotation Mode",
+    testId: "laser-mode-annotation",
+  },
+  {
+    mode: "hold-to-draw" as const,
+    label: "Hold-to-Draw Mode",
+    testId: "laser-mode-hold-to-draw",
+  },
+] as const;
 
 export const LaserPointerMenu = ({
   activeTool,
@@ -16,10 +36,10 @@ export const LaserPointerMenu = ({
 }: LaserPointerMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const isLaserActive = activeTool.type === "laser";
+  const currentMode = app.state.laserPointerMode;
+  const showClearButton = currentMode === "annotation";
 
-  const handleModeSelect = (
-    mode: "pointer" | "annotation" | "hold-to-draw",
-  ) => {
+  const handleModeSelect = (mode: LaserMode) => {
     app.setAppState({ laserPointerMode: mode });
     setIsOpen(false);
   };
@@ -46,25 +66,16 @@ export const LaserPointerMenu = ({
         onSelect={() => setIsOpen(false)}
         data-testid="laser-pointer-dropdown"
       >
-        <DropdownMenu.Item
-          data-testid="laser-mode-pointer"
-          onSelect={() => handleModeSelect("pointer")}
-        >
-          Pointer Mode
-        </DropdownMenu.Item>
-        <DropdownMenu.Item
-          data-testid="laser-mode-annotation"
-          onSelect={() => handleModeSelect("annotation")}
-        >
-          Annotation Mode
-        </DropdownMenu.Item>
-        <DropdownMenu.Item
-          data-testid="laser-mode-hold-to-draw"
-          onSelect={() => handleModeSelect("hold-to-draw")}
-        >
-          Hold-to-Draw Mode
-        </DropdownMenu.Item>
-        {app.state.laserPointerMode === "annotation" && (
+        {MENU_ITEMS.map(({ mode, label, testId }) => (
+          <DropdownMenu.Item
+            key={mode}
+            data-testid={testId}
+            onSelect={() => handleModeSelect(mode)}
+          >
+            {label}
+          </DropdownMenu.Item>
+        ))}
+        {showClearButton && (
           <DropdownMenu.Item
             data-testid="laser-clear-annotations"
             onSelect={handleClearAnnotations}
