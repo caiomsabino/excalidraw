@@ -28,28 +28,46 @@ export class LaserTrails implements Trail {
     });
   }
 
-  private getTrailOptions() {
+  private getTrailOptions(): Partial<LaserPointerOptions> {
+    const rawSize = this.app?.state?.laserPointerSize;
+    const size = this.clampLaserSize(rawSize);
+
+    console.debug("laserPointerSize raw:", rawSize, "clamped:", size);
+
+    const DECAY_TIME = 1000;
+    const DECAY_LENGTH = 50;
+
+    const calcTimeFactor = (pressure: number) =>
+      Math.max(0, 1 - (performance.now() - pressure) / DECAY_TIME);
+
+    const calcLengthFactor = (totalLength: number, currentIndex: number) =>
+      (DECAY_LENGTH - Math.min(DECAY_LENGTH, totalLength - currentIndex)) / DECAY_LENGTH;
+
     return {
       simplify: 0,
       streamline: 0.4,
+      size,
       sizeMapping: (c) => {
-        const DECAY_TIME = 1000;
-        const DECAY_LENGTH = 50;
-        const t = Math.max(
-          0,
-          1 - (performance.now() - c.pressure) / DECAY_TIME,
-        );
-        const l =
-          (DECAY_LENGTH -
-            Math.min(DECAY_LENGTH, c.totalLength - c.currentIndex)) /
-          DECAY_LENGTH;
-
+        const t = calcTimeFactor(c.pressure);
+        const l = calcLengthFactor(c.totalLength, c.currentIndex);
         return Math.min(easeOut(l), easeOut(t));
       },
     } as Partial<LaserPointerOptions>;
   }
 
+  clampLaserSize(value?: number): number {
+    const defaultSize = 5;
+    const min = 1;
+    const max = 10;
+    return Math.max(min, Math.min(max, value ?? defaultSize));
+  }
+
   startPath(x: number, y: number): void {
+    // Atualiza opções da trilha local antes de iniciar o path
+    this.localTrail.updateOptions({
+      ...this.getTrailOptions(),
+      fill: () => DEFAULT_LASER_COLOR,
+    });
     this.localTrail.startPath(x, y);
   }
 
@@ -97,6 +115,13 @@ export class LaserTrails implements Trail {
         this.collabTrails.set(key, trail);
       } else {
         trail = this.collabTrails.get(key)!;
+
+        trail.updateOptions({
+          ...this.getTrailOptions(),
+          fill: () =>
+            collaborator.pointer?.laserColor ||
+            getClientColor(key, collaborator),
+        });
       }
 
       if (collaborator.pointer && collaborator.pointer.tool === "laser") {
@@ -128,3 +153,5 @@ export class LaserTrails implements Trail {
     }
   }
 }
+
+

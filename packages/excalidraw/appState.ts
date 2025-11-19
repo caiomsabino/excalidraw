@@ -128,6 +128,7 @@ export const getDefaultAppState = (): Omit<
     lockedMultiSelections: {},
     activeLockedId: null,
     laserPointerMode: "pointer",
+    laserPointerSize: 5,
   };
 };
 
@@ -254,6 +255,7 @@ const APP_STATE_STORAGE_CONF = (<
   lockedMultiSelections: { browser: true, export: true, server: true },
   activeLockedId: { browser: false, export: false, server: false },
   laserPointerMode: { browser: true, export: false, server: false },
+  laserPointerSize: { browser: true, export: false, server: false },
 });
 
 const _clearAppStateForStorage = <

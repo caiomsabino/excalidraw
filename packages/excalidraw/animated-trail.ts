@@ -128,6 +128,15 @@ export class AnimatedTrail implements Trail {
     this.update();
   }
 
+  // Allow callers to update runtime options (e.g. size) before creating a
+  // new LaserPointer so changes in app state are applied immediately.
+  updateOptions(options: Partial<LaserPointerOptions> & Partial<AnimatedTrailOptions>) {
+    this.options = {
+      ...(this.options ?? {}),
+      ...(options ?? {}),
+    };
+  }
+
   private update() {
     this.start();
     if (this.trailAnimation) {

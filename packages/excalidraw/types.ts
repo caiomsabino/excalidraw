@@ -453,6 +453,8 @@ export interface AppState {
 
   /** laser pointer mode selection */
   laserPointerMode: "pointer" | "annotation" | "hold-to-draw";
+  /** laser pointer thickness (pixels) */
+  laserPointerSize: number;
 }
 
 export type SearchMatch = {
