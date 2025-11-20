@@ -12,6 +12,7 @@ import type { AnimationFrameHandler } from "./animation-frame-handler";
 import type App from "./components/App";
 import type { AppState } from "./types";
 import { applyLaserStyles } from "./laserStyles";
+import { composeColorWithOpacity } from "./colorUtils";
 
 export interface Trail {
   start(container: SVGSVGElement): void;
@@ -112,19 +113,27 @@ export class AnimatedTrail implements Trail {
     // the color immediately after startPath without waiting for frame.
     try {
       if (this.trailAnimation) {
-        this.trailElement.setAttribute(
-          "fill",
-          (this.options.fill ?? (() => "black"))(this),
-        );
-        this.trailElement.setAttribute(
-          "stroke",
-          (this.options.stroke ?? (() => "black"))(this),
-        );
+        const baseFill = (this.options.fill ?? (() => "black"))(this);
+        const baseStroke = (this.options.stroke ?? (() => "black"))(this);
+        const op = (this.options as any)?.opacity;
+        if (op != null) {
+          this.trailElement.setAttribute("fill", composeColorWithOpacity(baseFill, op));
+          this.trailElement.setAttribute("stroke", composeColorWithOpacity(baseStroke, op));
+        } else {
+          this.trailElement.setAttribute("fill", baseFill);
+          this.trailElement.setAttribute("stroke", baseStroke);
+        }
       } else {
-        this.trailElement.setAttribute(
-          "fill",
-          (this.options.fill ?? (() => "black"))(this),
-        );
+        const baseFill = (this.options.fill ?? (() => "black"))(this);
+        const op = (this.options as any)?.opacity;
+        if (op != null) {
+          this.trailElement.setAttribute("fill", composeColorWithOpacity(baseFill, op));
+          // ensure stroke exists so stroke-opacity is meaningful (we now embed alpha into stroke)
+          const baseStroke = (this.options.stroke ?? (() => baseFill))(this);
+          this.trailElement.setAttribute("stroke", composeColorWithOpacity(baseStroke, op));
+        } else {
+          this.trailElement.setAttribute("fill", baseFill);
+        }
       }
     } catch (e) {
       // defensive: if option functions throw, don't break startPath
@@ -211,21 +220,29 @@ export class AnimatedTrail implements Trail {
       size: (this.options as any)?.size,
       neon: (this.options as any)?.neon,
     });
-    if (this.trailAnimation) {
-      this.trailElement.setAttribute(
-        "fill",
-        (this.options.fill ?? (() => "black"))(this),
-      );
-      this.trailElement.setAttribute(
-        "stroke",
-        (this.options.stroke ?? (() => "black"))(this),
-      );
-    } else {
-      this.trailElement.setAttribute(
-        "fill",
-        (this.options.fill ?? (() => "black"))(this),
-      );
-    }
+        if (this.trailAnimation) {
+          const baseFill = (this.options.fill ?? (() => "black"))(this);
+          const baseStroke = (this.options.stroke ?? (() => "black"))(this);
+          const op = (this.options as any)?.opacity;
+          if (op != null) {
+            this.trailElement.setAttribute("fill", composeColorWithOpacity(baseFill, op));
+            this.trailElement.setAttribute("stroke", composeColorWithOpacity(baseStroke, op));
+          } else {
+            this.trailElement.setAttribute("fill", baseFill);
+            this.trailElement.setAttribute("stroke", baseStroke);
+          }
+        } else {
+          const baseFill = (this.options.fill ?? (() => "black"))(this);
+          const op = (this.options as any)?.opacity;
+          if (op != null) {
+            this.trailElement.setAttribute("fill", composeColorWithOpacity(baseFill, op));
+            // ensure stroke exists so stroke-opacity is meaningful (we now embed alpha into stroke)
+            const baseStroke = (this.options.stroke ?? (() => baseFill))(this);
+            this.trailElement.setAttribute("stroke", composeColorWithOpacity(baseStroke, op));
+          } else {
+            this.trailElement.setAttribute("fill", baseFill);
+          }
+        }
   }
 
   private drawTrail(trail: LaserPointer, state: AppState): string {

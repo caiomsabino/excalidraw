@@ -59,6 +59,7 @@ export class LaserTrails implements Trail {
       streamline: 0.4,
       size,
       fill: () => (this.app?.state?.laserPointerColor as string) || DEFAULT_LASER_COLOR,
+      opacity: (this.app?.state as any)?.laserPointerOpacity ?? 1,
       neon,
       sizeMapping: (c: any) => {
         const t = calcTimeFactor(c.pressure);

@@ -457,6 +457,8 @@ export interface AppState {
   laserPointerSize: number;
   /** laser neon glow enabled */
   laserPointerNeon: boolean;
+  /** laser pointer opacity (0..1) */
+  laserPointerOpacity: number;
   /** laser pointer color in hex or css color string */
   laserPointerColor: string;
 }
