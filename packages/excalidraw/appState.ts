@@ -129,6 +129,7 @@ export const getDefaultAppState = (): Omit<
     activeLockedId: null,
     laserPointerMode: "pointer",
     laserPointerSize: 5,
+    laserPointerNeon: false,
   };
 };
 
@@ -256,6 +257,7 @@ const APP_STATE_STORAGE_CONF = (<
   activeLockedId: { browser: false, export: false, server: false },
   laserPointerMode: { browser: true, export: false, server: false },
   laserPointerSize: { browser: true, export: false, server: false },
+  laserPointerNeon: { browser: true, export: false, server: false },
 });
 
 const _clearAppStateForStorage = <

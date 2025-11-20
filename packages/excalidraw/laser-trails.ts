@@ -3,6 +3,7 @@ import { DEFAULT_LASER_COLOR, easeOut } from "@excalidraw/common";
 import type { LaserPointerOptions } from "@excalidraw/laser-pointer";
 
 import { AnimatedTrail } from "./animated-trail";
+import type { AnimatedTrailOptions } from "./animated-trail";
 import { getClientColor } from "./clients";
 
 import type { Trail } from "./animated-trail";
@@ -28,11 +29,12 @@ export class LaserTrails implements Trail {
     });
   }
 
-  private getTrailOptions(): Partial<LaserPointerOptions> {
+  private getTrailOptions(): Partial<LaserPointerOptions> & Partial<AnimatedTrailOptions> {
     const rawSize = this.app?.state?.laserPointerSize;
     const size = this.clampLaserSize(rawSize);
+    const neon = !!(this.app?.state as any)?.laserPointerNeon;
 
-    console.debug("laserPointerSize raw:", rawSize, "clamped:", size);
+    console.debug("laserPointerSize raw:", rawSize, "clamped:", size, "neon:", neon);
 
     const DECAY_TIME = 1000;
     const DECAY_LENGTH = 50;
@@ -47,12 +49,13 @@ export class LaserTrails implements Trail {
       simplify: 0,
       streamline: 0.4,
       size,
-      sizeMapping: (c) => {
+      neon,
+      sizeMapping: (c: any) => {
         const t = calcTimeFactor(c.pressure);
         const l = calcLengthFactor(c.totalLength, c.currentIndex);
         return Math.min(easeOut(l), easeOut(t));
       },
-    } as Partial<LaserPointerOptions>;
+    } as Partial<LaserPointerOptions & AnimatedTrailOptions>;
   }
 
   clampLaserSize(value?: number): number {

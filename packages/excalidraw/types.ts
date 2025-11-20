@@ -455,6 +455,8 @@ export interface AppState {
   laserPointerMode: "pointer" | "annotation" | "hold-to-draw";
   /** laser pointer thickness (pixels) */
   laserPointerSize: number;
+  /** laser neon glow enabled */
+  laserPointerNeon: boolean;
 }
 
 export type SearchMatch = {

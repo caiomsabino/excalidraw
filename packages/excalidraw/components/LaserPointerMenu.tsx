@@ -49,6 +49,17 @@ export const LaserPointerMenu = ({
     setIsOpen(false);
   };
 
+  const handleSizeChange = (value: number) => {
+    // clamp to 1..10 minimal logic
+    const clamped = Math.max(1, Math.min(10, value));
+    app.setAppState({ laserPointerSize: clamped });
+  };
+
+  const handleNeonToggle = () => {
+    const current = !!(app.state as any).laserPointerNeon;
+    app.setAppState({ laserPointerNeon: !current });
+  };
+
   if (!isLaserActive) {
     return null;
   }
@@ -66,6 +77,37 @@ export const LaserPointerMenu = ({
         onSelect={() => setIsOpen(false)}
         data-testid="laser-pointer-dropdown"
       >
+        <div style={{ padding: 8 }}>
+          <label htmlFor="laser-size-slider">Thickness</label>
+          <input
+            id="laser-size-slider"
+            data-testid="laser-size-slider"
+            type="range"
+            min={1}
+            max={10}
+            defaultValue={(app.state as any).laserPointerSize ?? 5}
+            onChange={(e) => handleSizeChange(Number((e.target as HTMLInputElement).value))}
+          />
+          <input
+            data-testid="laser-size-input"
+            type="number"
+            min={1}
+            max={10}
+            defaultValue={(app.state as any).laserPointerSize ?? 5}
+            onChange={(e) => handleSizeChange(Number((e.target as HTMLInputElement).value))}
+            style={{ width: 40, marginLeft: 8 }}
+          />
+          <div style={{ marginTop: 8 }}>
+            <label htmlFor="laser-neon-toggle" style={{ marginRight: 8 }}>Neon</label>
+            <input
+              id="laser-neon-toggle"
+              data-testid="laser-neon-toggle"
+              type="checkbox"
+              defaultChecked={!!(app.state as any).laserPointerNeon}
+              onChange={() => handleNeonToggle()}
+            />
+          </div>
+        </div>
         {MENU_ITEMS.map(({ mode, label, testId }) => (
           <DropdownMenu.Item
             key={mode}

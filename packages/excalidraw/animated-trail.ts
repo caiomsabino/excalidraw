@@ -44,6 +44,8 @@ export class AnimatedTrail implements Trail {
     this.animationFrameHandler.register(this, this.onFrame.bind(this));
 
     this.trailElement = document.createElementNS(SVG_NS, "path");
+    // mark the trail element so tests and tools can select it reliably
+    this.trailElement.setAttribute("data-testid", "laser-trail-path");
     if (this.options.animateTrail) {
       this.trailAnimation = document.createElementNS(SVG_NS, "animate");
       // TODO: make this configurable
@@ -97,6 +99,25 @@ export class AnimatedTrail implements Trail {
     this.currentTrail = new LaserPointer(this.options);
 
     this.currentTrail.addPoint([x, y, performance.now()]);
+
+    // ensure DOM reflects current size immediately (tests and quick UX)
+    const sizeVal = (this.options as any)?.size ?? 1;
+    if (sizeVal != null) {
+      this.trailElement.setAttribute("stroke-width", String(sizeVal));
+      this.trailElement.style.strokeWidth = `${sizeVal}`;
+    }
+
+    // restore: use actual neon option
+    const neon = (this.options as any)?.neon;
+    if (neon) {
+      this.trailElement.classList.add("laser-neon");
+      this.trailElement.style.filter = this.trailElement.style.filter || "drop-shadow(0 0 6px rgba(255,255,255,0.9))";
+    } else {
+      this.trailElement.classList.remove("laser-neon");
+      if (this.trailElement.style.filter && this.trailElement.style.filter.includes("drop-shadow")) {
+        this.trailElement.style.filter = "";
+      }
+    }
 
     this.update();
   }
@@ -169,6 +190,26 @@ export class AnimatedTrail implements Trail {
     const svgPaths = paths.join(" ").trim();
 
     this.trailElement.setAttribute("d", svgPaths);
+    // Apply stroke-width from options so UI updates are reflected visually
+    const sizeVal = (this.options as any)?.size ?? 1;
+    if (sizeVal != null) {
+      this.trailElement.setAttribute("stroke-width", String(sizeVal));
+      // also set inline style as fallback
+      this.trailElement.style.strokeWidth = `${sizeVal}`;
+    }
+    // apply or remove neon styles on frame updates as well
+    const neon = (this.options as any)?.neon;
+    if (neon) {
+      this.trailElement.classList.add("laser-neon");
+      if (!this.trailElement.style.filter || !this.trailElement.style.filter.includes("drop-shadow")) {
+        this.trailElement.style.filter = this.trailElement.style.filter || "drop-shadow(0 0 6px rgba(255,255,255,0.9))";
+      }
+    } else {
+      this.trailElement.classList.remove("laser-neon");
+      if (this.trailElement.style.filter && this.trailElement.style.filter.includes("drop-shadow")) {
+        this.trailElement.style.filter = "";
+      }
+    }
     if (this.trailAnimation) {
       this.trailElement.setAttribute(
         "fill",
