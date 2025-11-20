@@ -11,6 +11,7 @@ import type { LaserPointerOptions } from "@excalidraw/laser-pointer";
 import type { AnimationFrameHandler } from "./animation-frame-handler";
 import type App from "./components/App";
 import type { AppState } from "./types";
+import { applyLaserStyles } from "./laserStyles";
 
 export interface Trail {
   start(container: SVGSVGElement): void;
@@ -100,24 +101,12 @@ export class AnimatedTrail implements Trail {
 
     this.currentTrail.addPoint([x, y, performance.now()]);
 
-    // ensure DOM reflects current size immediately (tests and quick UX)
-    const sizeVal = (this.options as any)?.size ?? 1;
-    if (sizeVal != null) {
-      this.trailElement.setAttribute("stroke-width", String(sizeVal));
-      this.trailElement.style.strokeWidth = `${sizeVal}`;
-    }
-
-    // restore: use actual neon option
-    const neon = (this.options as any)?.neon;
-    if (neon) {
-      this.trailElement.classList.add("laser-neon");
-      this.trailElement.style.filter = this.trailElement.style.filter || "drop-shadow(0 0 6px rgba(255,255,255,0.9))";
-    } else {
-      this.trailElement.classList.remove("laser-neon");
-      if (this.trailElement.style.filter && this.trailElement.style.filter.includes("drop-shadow")) {
-        this.trailElement.style.filter = "";
-      }
-    }
+    // apply standard laser visual styles (size + neon) without touching
+    // fill/stroke/opacity attributes.
+    applyLaserStyles(this.trailElement, {
+      size: (this.options as any)?.size,
+      neon: (this.options as any)?.neon,
+    });
 
     this.update();
   }
@@ -190,26 +179,12 @@ export class AnimatedTrail implements Trail {
     const svgPaths = paths.join(" ").trim();
 
     this.trailElement.setAttribute("d", svgPaths);
-    // Apply stroke-width from options so UI updates are reflected visually
-    const sizeVal = (this.options as any)?.size ?? 1;
-    if (sizeVal != null) {
-      this.trailElement.setAttribute("stroke-width", String(sizeVal));
-      // also set inline style as fallback
-      this.trailElement.style.strokeWidth = `${sizeVal}`;
-    }
-    // apply or remove neon styles on frame updates as well
-    const neon = (this.options as any)?.neon;
-    if (neon) {
-      this.trailElement.classList.add("laser-neon");
-      if (!this.trailElement.style.filter || !this.trailElement.style.filter.includes("drop-shadow")) {
-        this.trailElement.style.filter = this.trailElement.style.filter || "drop-shadow(0 0 6px rgba(255,255,255,0.9))";
-      }
-    } else {
-      this.trailElement.classList.remove("laser-neon");
-      if (this.trailElement.style.filter && this.trailElement.style.filter.includes("drop-shadow")) {
-        this.trailElement.style.filter = "";
-      }
-    }
+    // Apply standard laser visual styles (size + neon) without touching
+    // fill/stroke/opacity attributes.
+    applyLaserStyles(this.trailElement, {
+      size: (this.options as any)?.size,
+      neon: (this.options as any)?.neon,
+    });
     if (this.trailAnimation) {
       this.trailElement.setAttribute(
         "fill",
