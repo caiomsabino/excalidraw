@@ -130,6 +130,7 @@ export const getDefaultAppState = (): Omit<
     laserPointerMode: "pointer",
     laserPointerSize: 5,
     laserPointerNeon: false,
+    laserPointerColor: "#FF0000",
   };
 };
 
@@ -258,6 +259,7 @@ const APP_STATE_STORAGE_CONF = (<
   laserPointerMode: { browser: true, export: false, server: false },
   laserPointerSize: { browser: true, export: false, server: false },
   laserPointerNeon: { browser: true, export: false, server: false },
+  laserPointerColor: { browser: true, export: false, server: false },
 });
 
 const _clearAppStateForStorage = <

@@ -25,7 +25,6 @@ export class LaserTrails implements Trail {
 
     this.localTrail = new AnimatedTrail(animationFrameHandler, app, {
       ...this.getTrailOptions(),
-      fill: () => DEFAULT_LASER_COLOR,
     });
   }
 
@@ -34,7 +33,17 @@ export class LaserTrails implements Trail {
     const size = this.clampLaserSize(rawSize);
     const neon = !!(this.app?.state as any)?.laserPointerNeon;
 
-    console.debug("laserPointerSize raw:", rawSize, "clamped:", size, "neon:", neon);
+    const colorState = (this.app?.state as any)?.laserPointerColor;
+    console.debug(
+      "laserPointerSize raw:",
+      rawSize,
+      "clamped:",
+      size,
+      "neon:",
+      neon,
+      "color:",
+      colorState,
+    );
 
     const DECAY_TIME = 1000;
     const DECAY_LENGTH = 50;
@@ -49,6 +58,7 @@ export class LaserTrails implements Trail {
       simplify: 0,
       streamline: 0.4,
       size,
+      fill: () => (this.app?.state?.laserPointerColor as string) || DEFAULT_LASER_COLOR,
       neon,
       sizeMapping: (c: any) => {
         const t = calcTimeFactor(c.pressure);
@@ -69,7 +79,6 @@ export class LaserTrails implements Trail {
     // Atualiza opções da trilha local antes de iniciar o path
     this.localTrail.updateOptions({
       ...this.getTrailOptions(),
-      fill: () => DEFAULT_LASER_COLOR,
     });
     this.localTrail.startPath(x, y);
   }

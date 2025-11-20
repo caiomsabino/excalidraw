@@ -108,6 +108,32 @@ export class AnimatedTrail implements Trail {
       neon: (this.options as any)?.neon,
     });
 
+    // Apply fill/stroke synchronously so tests and consumers can read
+    // the color immediately after startPath without waiting for frame.
+    try {
+      if (this.trailAnimation) {
+        this.trailElement.setAttribute(
+          "fill",
+          (this.options.fill ?? (() => "black"))(this),
+        );
+        this.trailElement.setAttribute(
+          "stroke",
+          (this.options.stroke ?? (() => "black"))(this),
+        );
+      } else {
+        this.trailElement.setAttribute(
+          "fill",
+          (this.options.fill ?? (() => "black"))(this),
+        );
+      }
+    } catch (e) {
+      // defensive: if option functions throw, don't break startPath
+      // leave attributes untouched and let onFrame apply them later
+      // (this preserves previous behavior in edge cases)
+      // eslint-disable-next-line no-console
+      console.warn("AnimatedTrail: failed to apply fill/stroke synchronously", e);
+    }
+
     this.update();
   }
 
