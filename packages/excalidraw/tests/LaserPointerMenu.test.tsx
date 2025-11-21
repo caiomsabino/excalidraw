@@ -15,6 +15,13 @@ describe("LaserPointerMenu", () => {
 
   it("should show menu when laser tool is active", () => {
     act(() => {
+      h.app.setAppState({
+        laserPointerMode: "pointer",
+        laserPointerSize: 5,
+        laserPointerNeon: false,
+        laserPointerColor: "#FF0000",
+        laserPointerOpacity: 1,
+      });
       h.app.setActiveTool({ type: "laser" });
     });
     expect(h.state.activeTool.type).toBe("laser");
@@ -27,6 +34,13 @@ describe("LaserPointerMenu", () => {
 
   it("should hide menu when laser tool is inactive", () => {
     act(() => {
+      h.app.setAppState({
+        laserPointerMode: "pointer",
+        laserPointerSize: 5,
+        laserPointerNeon: false,
+        laserPointerColor: "#FF0000",
+        laserPointerOpacity: 1,
+      });
       h.app.setActiveTool({ type: "laser" });
     });
 
@@ -48,6 +62,13 @@ describe("LaserPointerMenu", () => {
 
   it("should display all three mode options when opened", async () => {
     act(() => {
+      h.app.setAppState({
+        laserPointerMode: "pointer",
+        laserPointerSize: 5,
+        laserPointerNeon: false,
+        laserPointerColor: "#FF0000",
+        laserPointerOpacity: 1,
+      });
       h.app.setActiveTool({ type: "laser" });
     });
 
@@ -77,6 +98,14 @@ describe("LaserPointerMenu", () => {
 
   it("should change laser mode when option is selected", async () => {
     act(() => {
+      // Initialize laser pointer properties in test environment
+      h.app.setAppState({
+        laserPointerMode: "pointer",
+        laserPointerSize: 5,
+        laserPointerNeon: false,
+        laserPointerColor: "#FF0000",
+        laserPointerOpacity: 1,
+      });
       h.app.setActiveTool({ type: "laser" });
     });
 
@@ -101,6 +130,13 @@ describe("LaserPointerMenu", () => {
 
   it("should change to hold-to-draw mode when selected", async () => {
     act(() => {
+      h.app.setAppState({
+        laserPointerMode: "pointer",
+        laserPointerSize: 5,
+        laserPointerNeon: false,
+        laserPointerColor: "#FF0000",
+        laserPointerOpacity: 1,
+      });
       h.app.setActiveTool({ type: "laser" });
     });
 
@@ -122,8 +158,14 @@ describe("LaserPointerMenu", () => {
 
   it("should show clear button only when in annotation mode", async () => {
     act(() => {
+      h.app.setAppState({
+        laserPointerMode: "annotation",
+        laserPointerSize: 5,
+        laserPointerNeon: false,
+        laserPointerColor: "#FF0000",
+        laserPointerOpacity: 1,
+      });
       h.app.setActiveTool({ type: "laser" });
-      h.app.setAppState({ laserPointerMode: "annotation" });
     });
 
     const laserMenu = container.querySelector(
@@ -149,8 +191,14 @@ describe("LaserPointerMenu", () => {
 
   it("should hide clear button when laser tool is deactivated", async () => {
     act(() => {
+      h.app.setAppState({
+        laserPointerMode: "annotation",
+        laserPointerSize: 5,
+        laserPointerNeon: false,
+        laserPointerColor: "#FF0000",
+        laserPointerOpacity: 1,
+      });
       h.app.setActiveTool({ type: "laser" });
-      h.app.setAppState({ laserPointerMode: "annotation" });
     });
 
     const laserMenu = container.querySelector(

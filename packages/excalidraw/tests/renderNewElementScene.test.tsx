@@ -1,15 +1,31 @@
 import { describe, test, expect, beforeEach, afterEach, vi } from "vitest";
-import { renderNewElementScene } from "./renderNewElementScene";
+import { renderNewElementScene } from "../renderer/renderNewElementScene";
 import { isInvisiblySmallElement, shouldApplyFrameClip, getTargetFrame, renderElement } from "@excalidraw/element";
-import { bootstrapCanvas, getNormalizedCanvasDimensions } from "./helpers";
-import { frameClip } from "./staticScene";
+import { bootstrapCanvas, getNormalizedCanvasDimensions } from "../renderer/helpers";
+import { frameClip } from "../renderer/staticScene";
 
 // Mocks
 vi.mock("@excalidraw/element");
-vi.mock("./helpers");
-vi.mock("./staticScene");
+vi.mock("../renderer/helpers");
+vi.mock("../renderer/staticScene");
 vi.mock("@excalidraw/common", () => ({
   throttleRAF: (fn: any) => fn,
+  MIME_TYPES: {
+    svg: "image/svg+xml",
+    png: "image/png",
+    jpg: "image/jpeg",
+    gif: "image/gif",
+    webp: "image/webp",
+    bmp: "image/bmp",
+    ico: "image/x-icon",
+    avif: "image/avif",
+    jfif: "image/jfif",
+    text: "text/plain",
+    html: "text/html",
+    "excalidraw.svg": "image/svg+xml",
+    "excalidraw.png": "image/png",
+    binary: "application/octet-stream",
+  },
 }));
 
 describe("renderNewElementScene - Testes de Unidade", () => {
