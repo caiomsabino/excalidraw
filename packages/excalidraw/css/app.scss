@@ -37,3 +37,17 @@
   background-color: #121212;
   color: #ced4da;
 }
+
+/* Laser Neon Effect Styles */
+path[data-testid="laser-trail-path"] {
+  pointer-events: none;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+path[data-testid="laser-trail-path"].laser-neon {
+  filter: drop-shadow(0 0 4px var(--laser-color, #ff6b6b)) 
+          drop-shadow(0 0 8px var(--laser-color, #ff6b6b));
+  stroke-width: 2px !important;
+}

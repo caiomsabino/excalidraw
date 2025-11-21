@@ -1,6 +1,6 @@
 export function applyLaserStyles(
   el: SVGPathElement,
-  options: { size?: number; neon?: boolean },
+  options: { size?: number; neon?: boolean; color?: string },
 ) {
   const sizeVal = options?.size ?? 1;
   if (sizeVal != null) {
@@ -11,16 +11,15 @@ export function applyLaserStyles(
   const neon = !!options?.neon;
   if (neon) {
     el.classList.add("laser-neon");
-    if (!el.style.filter || !el.style.filter.includes("drop-shadow")) {
-      // do not alter other style attributes; only add a glow fallback
-      el.style.filter = el.style.filter || "drop-shadow(0 0 6px rgba(255,255,255,0.9))";
+    // Set CSS variable for neon glow effect
+    if (options.color) {
+      el.style.setProperty("--laser-color", options.color);
     }
   } else {
     el.classList.remove("laser-neon");
-    if (el.style.filter && el.style.filter.includes("drop-shadow")) {
-      // remove only the drop-shadow fallback we add
-      el.style.filter = "";
-    }
+    // Clear any inline filters and CSS variables
+    el.style.filter = "";
+    el.style.removeProperty("--laser-color");
   }
 }
 

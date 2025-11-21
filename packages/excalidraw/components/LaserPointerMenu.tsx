@@ -45,7 +45,10 @@ export const LaserPointerMenu = ({
   };
 
   const handleClearAnnotations = () => {
-    // Clear annotations logic will be implemented in future cycles
+    // Connect to LaserTrails system that's already integrated in App.tsx
+    if ((app as any).laserTrails) {
+      (app as any).laserTrails.clearAllTrails();
+    }
     setIsOpen(false);
   };
 
@@ -58,6 +61,15 @@ export const LaserPointerMenu = ({
   const handleNeonToggle = () => {
     const current = !!(app.state as any).laserPointerNeon;
     app.setAppState({ laserPointerNeon: !current });
+  };
+
+  const handleColorChange = (color: string) => {
+    app.setAppState({ laserPointerColor: color });
+  };
+
+  const handleOpacityChange = (opacity: number) => {
+    const clamped = Math.max(0, Math.min(1, opacity));
+    app.setAppState({ laserPointerOpacity: clamped });
   };
 
   if (!isLaserActive) {
@@ -106,6 +118,31 @@ export const LaserPointerMenu = ({
               defaultChecked={!!(app.state as any).laserPointerNeon}
               onChange={() => handleNeonToggle()}
             />
+          </div>
+          <div style={{ marginTop: 8 }}>
+            <label htmlFor="laser-color-picker">Color</label>
+            <input
+              id="laser-color-picker"
+              data-testid="laser-color-picker"
+              type="color"
+              defaultValue={app.state.laserPointerColor || "#FF0000"}
+              onChange={(e) => handleColorChange(e.target.value)}
+              style={{ width: 40, marginLeft: 8 }}
+            />
+          </div>
+          <div style={{ marginTop: 8 }}>
+            <label htmlFor="laser-opacity-slider">Opacity</label>
+            <input
+              id="laser-opacity-slider"
+              data-testid="laser-opacity-slider"
+              type="range"
+              min={0}
+              max={1}
+              step={0.1}
+              defaultValue={(app.state as any).laserPointerOpacity ?? 1}
+              onChange={(e) => handleOpacityChange(Number(e.target.value))}
+            />
+            <span style={{ marginLeft: 8 }}>{Math.round(((app.state as any).laserPointerOpacity ?? 1) * 100)}%</span>
           </div>
         </div>
         {MENU_ITEMS.map(({ mode, label, testId }) => (

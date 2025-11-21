@@ -305,7 +305,30 @@ describe("renderNewElementScene - Testes de Unidade", () => {
 
   // CT11: Frame válido com clip e rendering habilitados
   test("CT11: Frame válido com clip e rendering habilitados - recorte aplicado", () => {
-    const mockFrame = { id: "frame-1", type: "frame" };
+    const mockFrame = {
+      id: "frame-1",
+      type: "frame",
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 100,
+      strokeColor: "#000000",
+      backgroundColor: "transparent",
+      fillStyle: "solid",
+      strokeWidth: 1,
+      strokeStyle: "solid",
+      roundness: null,
+      opacity: 100,
+      roughness: 1,
+      seed: 1,
+      frameId: null,
+      index: null,
+      angle: 0,
+      groupIds: [],
+      link: null,
+      updated: 1,
+      isDeleted: false
+    } as any;
     const mockElement = {
       id: "test-1",
       type: "rectangle",
@@ -369,7 +392,7 @@ describe("renderNewElementScene - Testes de Unidade", () => {
 
   // CT13: Frame existe mas recorte não deve ser aplicado
   test("CT13: Frame existe mas shouldApplyFrameClip retorna false - nenhum recorte aplicado", () => {
-    const mockFrame = { id: "frame-1", type: "frame" };
+    const mockFrame = { id: "frame-1", type: "frame", x: 0, y: 0, width: 100, height: 100 } as any;
     const mockElement = {
       id: "test-1",
       type: "rectangle",
@@ -401,7 +424,7 @@ describe("renderNewElementScene - Testes de Unidade", () => {
 
   // CT14: Frame válido e clip é aplicável
   test("CT14: Frame válido e clip aplicável - executa o recorte com frameClip", () => {
-    const mockFrame = { id: "frame-1", type: "frame" };
+    const mockFrame = { id: "frame-1", type: "frame", x: 0, y: 0, width: 100, height: 100 } as any;
     const mockElement = {
       id: "test-1",
       type: "rectangle",

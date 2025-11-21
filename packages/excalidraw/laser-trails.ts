@@ -34,18 +34,10 @@ export class LaserTrails implements Trail {
     const neon = !!(this.app?.state as any)?.laserPointerNeon;
 
     const colorState = (this.app?.state as any)?.laserPointerColor;
-    console.debug(
-      "laserPointerSize raw:",
-      rawSize,
-      "clamped:",
-      size,
-      "neon:",
-      neon,
-      "color:",
-      colorState,
-    );
 
-    const DECAY_TIME = 1000;
+
+    const mode = this.app?.state?.laserPointerMode || "pointer";
+    const DECAY_TIME = mode === "annotation" ? 600000 : 1000;
     const DECAY_LENGTH = 50;
 
     const calcTimeFactor = (pressure: number) =>
@@ -61,6 +53,8 @@ export class LaserTrails implements Trail {
       fill: () => (this.app?.state?.laserPointerColor as string) || DEFAULT_LASER_COLOR,
       opacity: (this.app?.state as any)?.laserPointerOpacity ?? 1,
       neon,
+      laserPointerMode: this.app?.state?.laserPointerMode || "pointer",
+      decayDuration: DECAY_TIME,
       sizeMapping: (c: any) => {
         const t = calcTimeFactor(c.pressure);
         const l = calcLengthFactor(c.totalLength, c.currentIndex);

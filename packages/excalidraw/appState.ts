@@ -127,15 +127,11 @@ export const getDefaultAppState = (): Omit<
     searchMatches: null,
     lockedMultiSelections: {},
     activeLockedId: null,
-    ...(isTestEnv()
-      ? {}
-      : {
-          laserPointerMode: "pointer" as const,
-          laserPointerSize: 5,
-          laserPointerNeon: false,
-          laserPointerColor: "#FF0000",
-          laserPointerOpacity: 1,
-        }),
+    laserPointerMode: "pointer" as const,
+    laserPointerSize: 5,
+    laserPointerNeon: false,
+    laserPointerColor: "#FF0000",
+    laserPointerOpacity: 1,
   };
 };
 

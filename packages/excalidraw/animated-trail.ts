@@ -28,6 +28,8 @@ export interface AnimatedTrailOptions {
   stroke?: (trail: AnimatedTrail) => string;
   animateTrail?: boolean;
   decayDuration?: number;
+  laserPointerMode?: "pointer" | "annotation" | "hold-to-draw";
+  easingFunction?: string;
 }
 
 export class AnimatedTrail implements Trail {
@@ -50,7 +52,7 @@ export class AnimatedTrail implements Trail {
 
   private clampDecayDuration(duration?: number): number {
     const MIN_DECAY = 50;
-    const MAX_DECAY = 5000;
+    const MAX_DECAY = 600000; // Allow up to 10 minutes for annotation mode
     const DEFAULT_DECAY = 1000;
     return Math.max(MIN_DECAY, Math.min(MAX_DECAY, duration ?? DEFAULT_DECAY));
   }
@@ -71,7 +73,7 @@ export class AnimatedTrail implements Trail {
   constructor(
     private animationFrameHandler: AnimationFrameHandler,
     protected app: App,
-    private options: Partial<LaserPointerOptions> &
+    public options: Partial<LaserPointerOptions> &
       Partial<AnimatedTrailOptions>,
   ) {
     this.animationFrameHandler.register(this, this.onFrame.bind(this));
@@ -150,6 +152,7 @@ export class AnimatedTrail implements Trail {
     applyLaserStyles(this.trailElement, {
       size: (this.options as any)?.size,
       neon: (this.options as any)?.neon,
+      color: (this.options.fill ?? (() => "black"))(this),
     });
 
     // Apply fill/stroke synchronously so tests and consumers can read
@@ -191,7 +194,6 @@ export class AnimatedTrail implements Trail {
 
   addPointToPath(x: number, y: number) {
     if (this.currentTrail) {
-      // In Pointer Mode, don't add points to the trail - just keep the initial point
       const mode = (this.options as any)?.laserPointerMode;
       if (mode !== "pointer") {
         this.currentTrail.addPoint([x, y, performance.now()]);
@@ -204,7 +206,15 @@ export class AnimatedTrail implements Trail {
     if (this.currentTrail) {
       this.currentTrail.close();
       this.currentTrail.options.keepHead = false;
-      this.pastTrails.push(this.currentTrail);
+      
+      const mode = (this.options as any)?.laserPointerMode;
+      
+      if (mode === "hold-to-draw" || mode === "annotation") {
+        (this.currentTrail as any).createdAt = performance.now();
+        this.pastTrails.push(this.currentTrail);
+      }
+      // Pointer mode trails are not persisted
+      
       this.currentTrail = undefined;
       this.update();
     }
@@ -307,9 +317,13 @@ export class AnimatedTrail implements Trail {
 
   private onFrame() {
     const paths: string[] = [];
+    const mode = (this.options as any)?.laserPointerMode;
 
     for (const trail of this.pastTrails) {
-      paths.push(this.drawTrail(trail, this.app.state));
+      const path = this.drawTrail(trail, this.app.state);
+      if (path) {
+        paths.push(path);
+      }
     }
 
     if (this.currentTrail) {
@@ -318,8 +332,13 @@ export class AnimatedTrail implements Trail {
       paths.push(currentPath);
     }
 
+    // Filter pastTrails based on opacity fade
     this.pastTrails = this.pastTrails.filter((trail) => {
-      return trail.getStrokeOutline().length !== 0;
+      if (mode === "pointer") {
+        return false;
+      }
+      const opacity = this.getOpacityFactor(trail);
+      return opacity > 0.01;
     });
 
     if (paths.length === 0) {
@@ -334,7 +353,11 @@ export class AnimatedTrail implements Trail {
     applyLaserStyles(this.trailElement, {
       size: (this.options as any)?.size,
       neon: (this.options as any)?.neon,
+      color: (this.options.fill ?? (() => "black"))(this),
     });
+
+    // Always full opacity on main element
+    this.trailElement.style.opacity = "1";
         if (this.trailAnimation) {
           const baseFill = (this.options.fill ?? (() => "black"))(this);
           const baseStroke = (this.options.stroke ?? (() => "black"))(this);

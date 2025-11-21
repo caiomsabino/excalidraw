@@ -142,24 +142,15 @@ describe("tdd(laser-pointer-mode): cycle 1 - Pointer Mode", () => {
       // Add multiple points (simulating cursor movements)
       trail.addPointToPath(110, 210);
       currentTrail = trail.getCurrentTrail();
-      expect(
-        currentTrail?.originalPoints.length,
-        "Should keep only 1 point after first move",
-      ).toBe(1);
+      expect(currentTrail?.originalPoints.length).toBe(1);
 
       trail.addPointToPath(120, 220);
       currentTrail = trail.getCurrentTrail();
-      expect(
-        currentTrail?.originalPoints.length,
-        "Should keep only 1 point after second move",
-      ).toBe(1);
+      expect(currentTrail?.originalPoints.length).toBe(1);
 
       trail.addPointToPath(130, 230);
       currentTrail = trail.getCurrentTrail();
-      expect(
-        currentTrail?.originalPoints.length,
-        "Should keep only 1 point after third move",
-      ).toBe(1);
+      expect(currentTrail?.originalPoints.length).toBe(1);
 
       trail.stop();
     });
