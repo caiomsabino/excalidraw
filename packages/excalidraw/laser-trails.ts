@@ -104,6 +104,13 @@ export class LaserTrails implements Trail {
     this.localTrail.stop();
   }
 
+  clearAllTrails() {
+    this.localTrail.clearTrails();
+    for (const trail of this.collabTrails.values()) {
+      trail.clearTrails();
+    }
+  }
+
   onFrame() {
     this.updateCollabTrails();
   }
